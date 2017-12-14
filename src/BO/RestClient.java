@@ -8,7 +8,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
 public class RestClient {
-    private static final String userUrl ="http://localhost:8080/user/";
+    private static final String userUrl ="http://localhost:8081/resource/";
     private  static Client client  = ClientBuilder.newClient();
     private static Gson gson =  new Gson();
 

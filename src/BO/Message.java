@@ -9,8 +9,8 @@ import java.util.List;
  */
 @Entity
 @NamedQueries({
-        @NamedQuery(name="Message.FindMessgesByRecipient",query = "Select m From Message m Where m.recipient.id= :id"),
-        @NamedQuery(name="Message.FindMessgesByRecipientAndSender",query = "Select m From Message m Where m.recipient.id= :id and m.sender.id = :id2")
+        @NamedQuery(name="Message.FindMessgesByRecipient",query = "Select m From Message m Where m.recipientId= :id"),
+        @NamedQuery(name="Message.FindMessgesByRecipientAndSender",query = "Select m From Message m Where m.recipientId= :id and m.senderId = :id2")
 })
 @Table(name = "message", schema = "SocialDb")
 
@@ -21,8 +21,8 @@ public class Message {
     private Date date;
     private String type;
 
-    private User sender;
-    private User recipient;
+    private long senderId;
+    private long recipientId;
 
 
 
@@ -62,22 +62,22 @@ public class Message {
     public void setType(String type) {
         this.type = type;
     }
-    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST)
-    @JoinColumn(name = "sender_id")
-    public User getSender() {
-        return sender;
+    @Basic
+    @Column(name = "sender_id")
+    public long getSenderId() {
+        return senderId;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setSenderId(long sender) {
+        this.senderId = sender;
     }
-    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.PERSIST)
-    @JoinColumn(name = "recipient_id")
-    public User getRecipient() {
-        return recipient;
+    @Basic
+    @Column(name = "recipient_id")
+    public long getRecipientId() {
+        return recipientId;
     }
 
-    public void setRecipient(User recipient) {
-        this.recipient = recipient;
+    public void setRecipientId(long recipient) {
+        this.recipientId = recipient;
     }
 }

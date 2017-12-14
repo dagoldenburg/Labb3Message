@@ -34,8 +34,9 @@ public class Facade {
     public static String createMessage(@FormParam("content")String content,
                                        @FormParam("date")String date, @FormParam("type")String type,
                                        @FormParam("sendId") String senderId, @FormParam("recipientId") String  recipientId){
+        System.out.println("punta kana");
         Gson gson = new Gson();
-        return gson.toJson(messageDb.createMessage(content,new Date(),type,Long.parseLong(senderId),Long.parseLong(recipientId)));
+        return gson.toJson(messageDb.createMessage(content,new Date(),"none",Long.parseLong(senderId),Long.parseLong(recipientId)));
     }
 
     /**
@@ -46,15 +47,20 @@ public class Facade {
     @GET
     @Path("messageByUser/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public  static String  getMessageByUserId(@PathParam("id")String id){
-        Gson gson = new Gson();
-        List<Message> messages =messageDb.getMessagesByUserId(Long.parseLong(id));
-        LinkedList<MessageViewModel>  messageVMs=new LinkedList<>();
-        for (Message m: messages) {
-            messageVMs.add(new MessageViewModel(m.getContent(),m.getDate(),m.getId(),
-                    RestClient.getUserById(Long.parseLong(id))));
+    public  static String getMessageByUserId(@PathParam("id")String id){
+        try {
+            Gson gson = new Gson();
+            List<Message> messages = messageDb.getMessagesByUserId(Long.parseLong(id));
+            LinkedList<MessageViewModel> messageVMs = new LinkedList<>();
+            for (Message m : messages) {
+                messageVMs.add(new MessageViewModel(m.getContent(), m.getDate(), m.getId(),
+                        RestClient.getUserById(Long.parseLong(id))));
+            }
+            return gson.toJson(messageVMs);
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        return gson.toJson(messageVMs);
+        return null;
     }
 
     /**
@@ -72,12 +78,12 @@ public class Facade {
         try {
             for (Message m : messageDb.getChatHistory(Long.parseLong(id), Long.parseLong(id2))) {
                 messages.add(0,new MessageViewModel(m.getContent(), m.getDate(), m.getId(),
-                        RestClient.getUserById(m.getSender().getId())
+                        RestClient.getUserById(m.getSenderId())
                 ));
             }
             for (Message m : messageDb.getChatHistory(Long.parseLong(id2), Long.parseLong(id))) {
                 messages.add(0,new MessageViewModel(m.getContent(), m.getDate(), m.getId(),
-                        RestClient.getUserById(m.getSender().getId())
+                        RestClient.getUserById(m.getSenderId())
                 ));
             }
             messages.sort(MessageViewModel::compareTo);

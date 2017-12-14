@@ -1,13 +1,11 @@
 package DB;
 
 import BO.Message;
-import BO.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,15 +24,11 @@ public class MessageDb {
             message.setContent(Content);
             message.setType(type);
             message.setDate(date);
-            User sender = (User) entityManager.find(User.class, senderId);
-            User recipient = (User) entityManager.find(User.class,  recipientId);
-            message.setSender(sender);
-            message.setRecipient(recipient);
-
-
-
+            message.setSenderId(senderId);
+            message.setRecipientId(recipientId);
             entityManager.persist(message);
             entityManager.getTransaction().commit();
+            System.out.println("munka wana");
         }catch (NoResultException e2){
             entityManager.getTransaction().rollback();
             System.out.println("Users Not Found");
@@ -62,8 +56,9 @@ public class MessageDb {
 
             entityManager.getTransaction().commit();
 
-        }catch (NoResultException e){
+        }catch (Exception e){
             entityManager.getTransaction().rollback();
+            e.printStackTrace();
         }finally {
             entityManager.close();
         }
